@@ -6,8 +6,6 @@ from ddpg_loop import ddpg
 from ddpg_agent import Agent
 import torch
 
-#from ppo_agent import ppo
-
 
 def print_demo(env, action_size):
     brain_name = env.brain_names[0]
@@ -30,9 +28,12 @@ def print_demo(env, action_size):
             break
     print('Total score (averaged over agents) this episode: {}'.format(np.mean(scores)))
 
-def setup():
-    env = UnityEnvironment(file_name='./Reacher_Linux20/Reacher.x86_64')
-    #env = UnityEnvironment(file_name='./Reacher_Linux/Reacher.x86_64')
+
+def setup(multi_env):
+    if multi_env:
+        env = UnityEnvironment(file_name='./Reacher_Linux20/Reacher.x86_64')
+    else:
+        env = UnityEnvironment(file_name='./Reacher_Linux/Reacher.x86_64')
     # get the default brain
     brain_name = env.brain_names[0]
     brain = env.brains[brain_name]
@@ -64,32 +65,33 @@ def plot_results(scores):
     plt.xlabel('Episode #')
     plt.show()
 
-def run_ddpg(env, state_size, action_size, n_episodes=1000, checkpoints_dir="checkpoints/ddpg"):
-    agent = Agent(state_size=state_size, action_size=action_size, random_seed=0)
-    scores = ddpg(env, agent, n_episodes=n_episodes, checkpoints_dir=checkpoints_dir)
-    return scores
-
-
-def eval_ddpg(env, state_size, action_size,actor_path,critic_path):
-    agent_eval = Agent(state_size=state_size, action_size=action_size, random_seed=0)
-    agent_eval.actor_local.load_state_dict(torch.load(actor_path))
-    agent_eval.critic_local.load_state_dict(torch.load(critic_path))
-    scores_eval_checkpoint = ddpg(env, agent_eval,train_mode=True,
-                                  update_network=False,
-                                  n_episodes=100, score_list_len=100)
-    return scores_eval_checkpoint
 
 if __name__ == '__main__':
-    env, state_size, action_size = setup()
-    #print_demo(env, action_size)
-    scores = run_ddpg(env, state_size, action_size)
-    plot_results(scores)
-    eval_ddpg(env, state_size, action_size,
-              actor_path='checkpoints/ddpg/115_checkpoint_actor_solved.pth',
-              critic_path='checkpoints/ddpg/115_checkpoint_critic_solved.pth')
+    run_demo=False
+    multi_env=True
+    eval_only=False
 
+    env, state_size, action_size = setup(multi_env)
+    if run_demo:
+        print_demo(env, action_size)
 
-    #scores = ppo(env,  state_size, action_size, seed=1235)
+    if eval_only:
+        actor_path='checkpoints/ddpg/115_checkpoint_actor_solved.pth'
+        critic_path='checkpoints/ddpg/115_checkpoint_critic_solved.pth'
+
+        agent_eval = Agent(state_size=state_size, action_size=action_size, random_seed=0)
+        agent_eval.actor_local.load_state_dict(torch.load(actor_path))
+        agent_eval.critic_local.load_state_dict(torch.load(critic_path))
+        scores_eval_checkpoint = ddpg(env, agent_eval,train_mode=True,
+                              update_network=False,
+                              n_episodes=100, score_list_len=100)
+
+        plot_results(scores_eval_checkpoint)
+
+    else:
+        agent = Agent(state_size=state_size, action_size=action_size, random_seed=0)
+        scores = ddpg(env, agent, n_episodes=1000, checkpoints_dir="checkpoints/ddpg")
+        plot_results(scores)
 
 
     env.close()

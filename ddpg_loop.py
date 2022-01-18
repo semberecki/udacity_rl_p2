@@ -6,7 +6,7 @@ import torch
 
 def ddpg(env, agent, n_episodes=1000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.999,
          train_mode=True, update_network=True, score_list_len=100, checkpoints_dir="checkpoints",
-         score_required=30, display_frequency=10):
+         score_required=30, display_frequency=1):
     """Deep Q-Learning.
 
     Params
@@ -58,8 +58,8 @@ def ddpg(env, agent, n_episodes=1000, max_t=1000, eps_start=1.0, eps_end=0.01, e
 
         if np.mean(scores_window)>=score_required and update_network:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-score_list_len, np.mean(scores_window)))
-            torch.save(agent.actor_local.state_dict(), f"{checkpoints_dir}/{i_episode}_checkpoint_actor.pth")
-            torch.save(agent.critic_local.state_dict(), f"{checkpoints_dir}/{i_episode}_checkpoint_critic.pth")
+            torch.save(agent.actor_local.state_dict(), f"{checkpoints_dir}/{i_episode}_checkpoint_actor_agents_{agents_number}.pth")
+            torch.save(agent.critic_local.state_dict(), f"{checkpoints_dir}/{i_episode}_checkpoint_critic_agents_{agents_number}.pth")
             break
 
 
