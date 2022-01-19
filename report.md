@@ -48,6 +48,10 @@ eps_decay=0.999 - multiplicative factor (per episode) for decreasing epsilon
 
 ```
 
+For the both implementations there was used single Neural Network. The difference was only in batch size, 
+depending 1 for single agent, 20 multiple agents. The memory buffer was fill with the experiences from all agents.
+
+
 ## Progress
 
 For 20 simultanous agents

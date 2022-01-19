@@ -67,8 +67,7 @@ jupyter notebook
 6. ```Reacher-Solution-ddpg.html``` - solution with results - html
 7. ```Reacher_Linux20.zip``` - binaries version 20 agents
 8. ```Reacher_Linux.zip``` - binaries version 1 agent
-9. ```README.md``` contains the DQN algorithm
-10. ```report.md``` directory with saved checkpoints.
-11. ```images``` contains graphics.
-12. ``` python ``` contains Unity Agents and other required packages
+9. ```report.md``` directory with saved checkpoints.
+10. ```images``` contains graphics.
+11. ``` python ``` contains Unity Agents and other required packages
 
